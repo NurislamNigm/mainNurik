@@ -213,7 +213,7 @@ def import_from_csv():
     try:
         with open(filename, mode='r', encoding='utf-8') as file:
             reader = csv.reader(file, delimiter=';')
-            next(reader)  # Пропустить заголовок
+            next(reader)
             for row in reader:
                 if len(row) != 4:
                     print(f"Неверный формат строки: {row}")
