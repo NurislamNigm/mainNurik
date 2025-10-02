@@ -1,55 +1,10 @@
-#Проект: «Библиотечная система»
-#При запуске программа выдаёт меню. Пользователь вводит номер действия, и программа выполняет его.
-#Меню
-#Добавить книгу (название, автор, год, список оценок читателей).
-#Показать все книги.
-#Найти книгу по названию.
-#Удалить книгу.
-#Добавить новую оценку книге.
-#Вывести список книг, выпущенных после определённого года.
-#Показать все книги с рейтингом выше определённого порога..
-#Экспортировать книги в CSV-вид (название;автор;год;оценки).
-#Импортировать книги из CSV.
-#Выход.
-
-
-#Требования
-#Данные хранить в словаре:
-
-
-#library = {
-#   		"Война и мир": {
-#			"author": "Л. Толстой", 
-#			"year": 1869, 
-#			"ratings": [5, 4, 5]
-#		},
- #   		"Преступление и наказание": {
-#			"author": "Ф. Достоевский", 
-#			"year": 1866, 
-#			"ratings": [5, 5, 4]
-#		}
-#}
-#Максимальная оценка книги в рейтинге - 5
-#Для каждого действия должна быть отдельная функция.
-#Использовать try/except (например, при вводе года, оценок, работе с файлами).
-#Добавить хотя бы один блок try/except/else/finally (например, при сохранении базы).
-
-library = {
-    		"Война и мир": {
-			"author": "Л. Толстой", 
-			"year": 1869, 
-			"ratings": [5, 4, 5]
-		},
-    		"Преступление и наказание": {
-			"author": "Ф. Достоевский", 
-			"year": 1866, 
-			"ratings": [5, 5, 4]
-		}
-}
-
 import csv
 
-#1 Меню
+library = {
+    "Война и мир": {"Автор": "Л. Толстой", "Год": 1869, "Рейтинг": [5, 4, 5]},
+    "Преступление и наказание": {"Автор": "Ф. Достоевский", "Год": 1866, "Рейтинг": [5, 5, 4]}
+}
+
 def menu():
     while True:
         print("\nМеню:")
@@ -58,10 +13,10 @@ def menu():
         print("3. Найти книгу по названию")
         print("4. Удалить книгу")
         print("5. Добавить новую оценку книге")
-        print("6. Вывести список книг, выпущенных после определённого года")
-        print("7. Показать все книги с рейтингом выше определённого порога")
-        print("8. Экспортировать книги в CSV-вид")
-        print("9. Импортировать книги из CSV")
+        print("6. Книги, выпущенные после определённого года")
+        print("7. Книги с рейтингом выше порога")
+        print("8. Экспорт в CSV")
+        print("9. Импорт из CSV")
         print("0. Выход")
 
         choice = input("Введите номер действия: ").strip()
@@ -90,7 +45,6 @@ def menu():
         else:
             print("Неверный выбор. Попробуйте снова.")
 
-#2 Добавить книгу (название, автор, год, список оценок читателей).
 def add_book():
     title = input("Введите название книги: ").strip()
     if title in library:
@@ -108,7 +62,6 @@ def add_book():
     library[title] = {"Автор": author, "Год": year, "Рейтинг": []}
     print(f"Книга '{title}' добавлена.")
 
-#3 Показать все книги.
 def show_books():
     if not library:
         print("Библиотека пустая.")
@@ -116,20 +69,19 @@ def show_books():
 
     for title, data in library.items():
         ratings = data["Рейтинг"]
-        avg_rating = round(sum(ratings) / len(ratings), 2) if ratings else "нет оцнок"
-        print(f"{title} — {data['Автор']} ({data['Год']}) | Оценки: {ratings} | Средняя оценк: {avg_rating}")
+        avg_rating = round(sum(ratings) / len(ratings), 2) if ratings else "нет оценок"
+        print(f"{title} — {data['Автор']} ({data['Год']}) | Оценки: {ratings} | Средняя оценка: {avg_rating}")
 
-#4 Найти книгу по названию.
 def find_book():
     search = input("Введите название книги: ").strip()
     for title, data in library.items():
         if title.lower() == search.lower():
-            print(f"Найдена: {title} — {data['Автор']} ({data['Дата']})")
+            ratings = data["Рейтинг"]
+            avg_rating = round(sum(ratings)/len(ratings),2) if ratings else "нет оценок"
+            print(f"Найдена: {title} — {data['Автор']} ({data['Год']}) | Оценки: {ratings} | Средняя оценка: {avg_rating}")
             return
-    else:
-        print("Книга не найдена.")
+    print("Книга не найдена.")
 
-#5 Удалить книгу.
 def delete_book():
     title = input("Введите название книги для удаления: ").strip()
     if title in library:
@@ -138,7 +90,6 @@ def delete_book():
     else:
         print("Книга не найдена.")
 
-#6 Добавить новую оценку книге.
 def add_rating():
     title = input("Введите название книги для оценки: ").strip()
     if title not in library:
@@ -156,7 +107,6 @@ def add_rating():
     library[title]["Рейтинг"].append(rating)
     print(f"Оценка {rating} добавлена к книге '{title}'.")
 
-#7 Вывести список книг, выпущенных после определённого года.
 def books_after_year():
     try:
         year = int(input("Введите год: ").strip())
@@ -169,11 +119,9 @@ def books_after_year():
         if data["Год"] > year:
             print(f"{title} — {data['Автор']} ({data['Год']})")
             found = True
-
     if not found:
         print(f"Нет книг, выпущенных после {year}.")
-    
-#8 Показать все книги с рейтингом выше определённого порога.
+
 def books_above_rating():
     try:
         threshold = float(input("Введите порог рейтинга: ").strip())
@@ -185,31 +133,36 @@ def books_above_rating():
     for title, data in library.items():
         ratings = data["Рейтинг"]
         if ratings:
-            avg_rating = sum(ratings) / len(ratings)
+            avg_rating = sum(ratings)/len(ratings)
             if avg_rating > threshold:
-                print(f"{title} — {data['Автор']} ({data['Год']}) | Средняя оценк: {round(avg_rating, 2)}")
+                print(f"{title} — {data['Автор']} ({data['Год']}) | Средняя оценка: {round(avg_rating,2)}")
                 found = True
-
     if not found:
         print(f"Нет книг с рейтингом выше {threshold}.")
 
-#9 Экспортировать книги в CSV-вид (название;автор;год;оценки).
 def export_to_csv():
-    filename = input("Введите имя файла для экспорта (например:8 обоичеловексумнымиочками.csv): ").strip()
+    filename = input("Введите имя файла для экспорта: ").strip()
     try:
-        with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        file = open(filename, mode='w', newline='', encoding='utf-8')
+    except Exception as e:
+        print(f"Ошибка при открытии файла: {e}")
+        return
+    else:
+        try:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(["Название", "Автор", "Год", "Оценки"])
             for title, data in library.items():
                 ratings = ','.join(map(str, data["Рейтинг"]))
                 writer.writerow([title, data["Автор"], data["Год"], ratings])
-        print(f"Библиотека экспортирована в {filename}.")
-    except Exception as e:
-        print(f"Ошибка при экспорте: {e}")  
+        except Exception as e:
+            print(f"Ошибка при записи: {e}")
+        else:
+            print(f"Библиотека экспортирована в {filename}.")
+        finally:
+            file.close()
 
-#10 Импортировать книги из CSV.
 def import_from_csv():
-    filename = input("Введите имя файла для импорта (например: обоичеловексумнымиочками.csv): ").strip()
+    filename = input("Введите имя файла для импорта: ").strip()
     try:
         with open(filename, mode='r', encoding='utf-8') as file:
             reader = csv.reader(file, delimiter=';')
@@ -231,7 +184,6 @@ def import_from_csv():
         print("Файл не найден.")
     except Exception as e:
         print(f"Ошибка при импорте: {e}")
-
 
 if __name__ == "__main__":
     menu()
