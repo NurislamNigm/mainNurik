@@ -185,5 +185,6 @@ def import_from_csv():
     except Exception as e:
         print(f"Ошибка при импорте: {e}")
 
+
 if __name__ == "__main__":
     menu()
